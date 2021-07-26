@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import getBlockchain from './utilities/getBlockchain';
+import getContracts from './utilities/getContracts';
 
 function App() {
   const [token, setToken] = useState<any>(undefined);
@@ -12,7 +12,7 @@ function App() {
   useEffect(() => {
     const init = async () => {
       debugger;
-      const { signerAddress, token, awesome } = await getBlockchain();
+      const { signerAddress, token, awesome } = await getContracts();
       setToken(token);
       setAwesome(awesome);
       setSignerAddress(signerAddress);

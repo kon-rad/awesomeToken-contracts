@@ -14,10 +14,9 @@ type BKSTPContracts = {
   awesome: any;
 };
 
-const getBlockchain = (): Promise<BKSTPContracts> => {
+const getContracts = (): Promise<BKSTPContracts> => {
   return new Promise((resolve, reject) => {
     window.addEventListener('load', async () => {
-      debugger;
       if (window.ethereum) {
         await window.ethereum.enable();
         const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -30,8 +29,6 @@ const getBlockchain = (): Promise<BKSTPContracts> => {
           BKSTPWallOfAwesome.abi,
           signer
         );
-        console.log('signerAddress: ', signerAddress);
-        console.log('token: ', token);
 
         resolve({ signerAddress, token, awesome });
       }
@@ -44,4 +41,4 @@ const getBlockchain = (): Promise<BKSTPContracts> => {
   });
 };
 
-export default getBlockchain;
+export default getContracts;
