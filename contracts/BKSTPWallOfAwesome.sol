@@ -27,7 +27,7 @@ contract BKSTPWallOfAwesome is Ownable {
   }
 
   modifier whitelistOnly {
-    require(whitelist[msg.sender]);
+    require(whitelist[msg.sender], "Caller must be whitelisted");
     _;
   }
 
@@ -66,7 +66,7 @@ contract BKSTPWallOfAwesome is Ownable {
     );
 
     // transferFrom 100 BKSTP tokens to recipient
-    token.transferFrom(msg.sender, _recipient, 100);
+    token.transferFrom(owner(), _recipient, 100);
 
     emit TokensTransferred(_recipient, 100);
   }
@@ -86,7 +86,7 @@ contract BKSTPWallOfAwesome is Ownable {
   function whitelistBatch(address[] calldata _users) onlyOwner public {
     for (uint i = 0; i < _users.length; i++) {
       require(!whitelist[_users[i]], "Candidate must not be whitelisted.");
-      whitelist[_users[i]];
+      whitelist[_users[i]] = true;
       whitelistedNumber++;
       emit Whitelisted(_users[i], true);
     }

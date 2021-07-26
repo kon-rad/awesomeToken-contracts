@@ -1,6 +1,7 @@
 const { expect } = require('chai');
+const { BigNumber } = require('ethers');
 
-describe('BKSTPWallOfAwesome', () => {
+describe('Contracts', () => {
   let Awesome, Token, awesome, token, owner, addr1, addr2;
   beforeEach(async () => {
     Awesome = await ethers.getContractFactory('BKSTPWallOfAwesome');
@@ -8,21 +9,35 @@ describe('BKSTPWallOfAwesome', () => {
     token = await Token.deploy();
     awesome = await Awesome.deploy(token.address);
     [owner, addr1, addr2, _] = await ethers.getSigners();
-    console.log('owner: ', owner.address);
-    // whitelist addr1 and addr2
-    awesome.whitelistBatch([addr1.address, addr2.address]);
+    await awesome.whitelistBatch([addr1.address, addr2.address]);
+    await token.approve(awesome.address, 1000000);
   });
 
-  // it('should whitelist addresses', async () => {
-  //   const wl = await awesome.whitelist(addr1.address);
-  //   console.log('whitelist: ', wl);
-  //   // expect(wl).to.include(addr1.address);
-  // });
+  describe('BKSTPToken', () => {
+    it('Should set the right owner', async () => {
+      expect(await token.owner()).to.equal(owner.address);
+    });
+    it('Should set the total of token balance to owner', async () => {
+      const ownerBalance = await token.balanceOf(owner.address);
+      expect(await token.totalSupply()).to.equal(ownerBalance);
+    });
+  });
 
-  it('should transfer tokens to recipient when posting submission', async () => {
-    console.log('hello');
-    await awesome
-      .connect(addr1)
-      .createSubmission('Thanks for being awesome', addr2.address);
+  describe('BKSTPWallOfAwesome', () => {
+    it('Should set the right owner', async () => {
+      expect(await awesome.owner()).to.equal(owner.address);
+    });
+    it('should transfer tokens to recipient when posting submission', async () => {
+      const initialOwnerBalance = await token.balanceOf(owner.address);
+      await awesome
+        .connect(addr1)
+        .createSubmission('Address 2 is awesome.', addr2.address);
+
+      expect(await token.balanceOf(addr2.address)).to.equal(100);
+
+      expect(await token.balanceOf(owner.address)).to.equal(
+        BigNumber.from(initialOwnerBalance).sub(100)
+      );
+    });
   });
 });

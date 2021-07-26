@@ -10,15 +10,27 @@ async function main() {
   // BKSTPToken
   const BKSTPToken = await ethers.getContractFactory('BKSTPToken');
   const token = await BKSTPToken.deploy();
-  console.log(`greeter address: ${token.address}`);
+  console.log(`Token address: ${token.address}`);
 
-  const data = {
+  const tokenData = {
     address: token.address,
     abi: JSON.parse(token.interface.format('json')),
   };
-  fs.writeFileSync('frontend/src/BKSTPToken.json', JSON.stringify(data));
+  fs.writeFileSync('frontend/src/BKSTPToken.json', JSON.stringify(tokenData));
 
   // BKSTPWallOfAwesome
+  const Awesome = await ethers.getContractFactory('BKSTPWallOfAwesome');
+  const awesome = await Awesome.deploy(token.address);
+  console.log(`BKSTPWallOfAwesome address: ${awesome.address}`);
+
+  const awesomeData = {
+    address: awesome.address,
+    abi: JSON.parse(awesome.interface.format('json')),
+  };
+  fs.writeFileSync(
+    'frontend/src/BKSTPWallOfAwesome.json',
+    JSON.stringify(awesomeData)
+  );
 }
 
 main()
